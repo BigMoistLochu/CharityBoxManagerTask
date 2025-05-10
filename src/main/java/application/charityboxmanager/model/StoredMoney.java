@@ -18,4 +18,9 @@ public class StoredMoney {
     private Money money;
 
     public StoredMoney(){}
+
+    public StoredMoney(CollectionBox collectionBox, Money money) {
+        this.collectionBox = collectionBox;
+        this.money = money;
+    }
 }
