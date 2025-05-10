@@ -14,7 +14,7 @@ public class CollectionBox {
 
     private boolean isAssigned;
 
-    @OneToMany(mappedBy = "collectionBox")
+    @OneToMany(mappedBy = "collectionBox", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<StoredMoney> storedMoneyList;
 
     public CollectionBox(){}
