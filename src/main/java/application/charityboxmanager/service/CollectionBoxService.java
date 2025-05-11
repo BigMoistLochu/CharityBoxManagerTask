@@ -2,14 +2,12 @@ package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.CollectionBoxDto;
 import application.charityboxmanager.exception.exceptions.CollectionBoxNotFoundException;
-import application.charityboxmanager.exception.exceptions.FundraisingEventNotFoundException;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.FundraisingEvent;
 import application.charityboxmanager.repository.CollectionBoxRepository;
 import application.charityboxmanager.repository.FundraisingEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service

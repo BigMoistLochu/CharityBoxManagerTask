@@ -51,4 +51,11 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(CollectionBoxNotAssignedToEventException.class)
+    public ResponseEntity<String> handleBoxNotAssigned(CollectionBoxNotAssignedToEventException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
 }
