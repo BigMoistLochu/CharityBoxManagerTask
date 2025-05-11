@@ -27,7 +27,7 @@ public class MoneyService {
         CollectionBox box = boxRepo.findById(boxId)
                 .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
 
-        //spradzic czy skrzynka jest podlaczona do eventu:
+        //spradzic czy skrzynka jest podlaczona do eventu, jesli nie jest to nie mozesz wrzucac do niej pieniedzy
 
         CurrencyCode currencyCode;
 
