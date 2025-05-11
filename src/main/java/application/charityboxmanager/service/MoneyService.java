@@ -1,7 +1,7 @@
 package application.charityboxmanager.service;
 
-import application.charityboxmanager.exception.CollectionBoxNotFoundException;
-import application.charityboxmanager.exception.InvalidCurrencyException;
+import application.charityboxmanager.exception.exceptions.CollectionBoxNotFoundException;
+import application.charityboxmanager.exception.exceptions.InvalidCurrencyException;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.StoredMoney;
 import application.charityboxmanager.model.common.CurrencyCode;

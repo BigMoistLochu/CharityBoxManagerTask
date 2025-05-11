@@ -1,7 +1,7 @@
 package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.CollectionBoxDto;
-import application.charityboxmanager.exception.CollectionBoxNotFoundException;
+import application.charityboxmanager.exception.exceptions.CollectionBoxNotFoundException;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.repository.CollectionBoxRepository;
 import org.springframework.stereotype.Service;
@@ -33,8 +33,8 @@ public class CollectionBoxService {
 
 
     @Transactional
-    public void removeCollectionBox(Long id) {
-        CollectionBox box = boxRepo.findById(id)
+    public void removeCollectionBox(Long boxId) {
+        CollectionBox box = boxRepo.findById(boxId)
                 .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
 
         storedMoneyService.removeAllStoredMoneyByCollectionBoxId(box.getId());

@@ -26,7 +26,7 @@ public class CollectionBoxController {
         return ResponseEntity.ok(collectionBoxService.getAllCollectionBox());
     }
     @PostMapping("/{boxId}/money")
-    public ResponseEntity<Void> addMoneyToBox(@PathVariable Long boxId, @RequestBody StoredMoneyDto dto) {
+    public ResponseEntity<Void> addMoneyToBox(@PathVariable Long boxId,@RequestBody StoredMoneyDto dto) {
         moneyService.addMoneyToBox(boxId, dto.amount(), dto.currency());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -42,6 +42,6 @@ public class CollectionBoxController {
     @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> removeBox(@PathVariable long id) {
         collectionBoxService.removeCollectionBox(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
