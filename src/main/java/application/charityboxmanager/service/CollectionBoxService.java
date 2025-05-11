@@ -5,6 +5,7 @@ import application.charityboxmanager.exception.CollectionBoxNotFoundException;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.repository.CollectionBoxRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,10 +13,11 @@ import java.util.List;
 public class CollectionBoxService {
 
     private final CollectionBoxRepository boxRepo;
+    private final StoredMoneyService storedMoneyService;
 
-
-    public CollectionBoxService(CollectionBoxRepository boxRepo) {
+    public CollectionBoxService(CollectionBoxRepository boxRepo, StoredMoneyService storedMoneyService) {
         this.boxRepo = boxRepo;
+        this.storedMoneyService = storedMoneyService;
     }
 
     public List<CollectionBoxDto> getAllCollectionBox(){
@@ -30,9 +32,12 @@ public class CollectionBoxService {
     }
 
 
+    @Transactional
     public void removeCollectionBox(Long id) {
         CollectionBox box = boxRepo.findById(id)
                 .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
+
+        storedMoneyService.removeAllStoredMoneyByCollectionBoxId(box.getId());
         boxRepo.delete(box);
     }
 
