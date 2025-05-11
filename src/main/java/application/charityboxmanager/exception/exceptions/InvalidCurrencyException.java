@@ -1,4 +1,4 @@
-package application.charityboxmanager.exception;
+package application.charityboxmanager.exception.exceptions;
 
 public class InvalidCurrencyException extends RuntimeException {
 
