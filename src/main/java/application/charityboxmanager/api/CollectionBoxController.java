@@ -3,7 +3,6 @@ package application.charityboxmanager.api;
 import application.charityboxmanager.api.dto.CollectionBoxDto;
 import application.charityboxmanager.api.dto.StoredMoneyDto;
 import application.charityboxmanager.service.CollectionBoxService;
-import application.charityboxmanager.service.MoneyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +13,9 @@ import java.util.List;
 public class CollectionBoxController {
 
     private final CollectionBoxService collectionBoxService;
-    private final MoneyService moneyService;
 
-    public CollectionBoxController(CollectionBoxService collectionBoxService, MoneyService moneyService) {
+    public CollectionBoxController(CollectionBoxService collectionBoxService) {
         this.collectionBoxService = collectionBoxService;
-        this.moneyService = moneyService;
     }
 
     @GetMapping
@@ -27,7 +24,7 @@ public class CollectionBoxController {
     }
     @PostMapping("/{boxId}/money")
     public ResponseEntity<Void> addMoneyToBox(@PathVariable Long boxId,@RequestBody StoredMoneyDto dto) {
-        moneyService.addMoneyToBox(boxId, dto.amount(), dto.currency());
+        collectionBoxService.addMoneyToBox(boxId, dto.amount(), dto.currency());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

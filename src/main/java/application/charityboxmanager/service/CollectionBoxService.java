@@ -1,25 +1,32 @@
 package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.CollectionBoxDto;
+import application.charityboxmanager.exception.exceptions.CollectionBoxNotAssignedToEventException;
 import application.charityboxmanager.exception.exceptions.CollectionBoxNotFoundException;
+import application.charityboxmanager.exception.exceptions.InvalidCurrencyException;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.FundraisingEvent;
+import application.charityboxmanager.model.StoredMoney;
+import application.charityboxmanager.model.common.CurrencyCode;
+import application.charityboxmanager.model.common.Money;
 import application.charityboxmanager.repository.CollectionBoxRepository;
 import application.charityboxmanager.repository.FundraisingEventRepository;
+import application.charityboxmanager.repository.StoredMoneyRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class CollectionBoxService {
 
     private final CollectionBoxRepository boxRepo;
-    private final StoredMoneyService storedMoneyService;
+    private final StoredMoneyRepository storedMoneyRepository;
     private final FundraisingEventRepository fundraisingEventRepository;
 
-    public CollectionBoxService(CollectionBoxRepository boxRepo, StoredMoneyService storedMoneyService, FundraisingEventRepository fundraisingEventRepository) {
+    public CollectionBoxService(CollectionBoxRepository boxRepo, StoredMoneyRepository storedMoneyRepository, FundraisingEventRepository fundraisingEventRepository) {
         this.boxRepo = boxRepo;
-        this.storedMoneyService = storedMoneyService;
+        this.storedMoneyRepository = storedMoneyRepository;
         this.fundraisingEventRepository = fundraisingEventRepository;
     }
 
@@ -47,8 +54,37 @@ public class CollectionBoxService {
             fundraisingEventRepository.save(event);
         }
 
-        storedMoneyService.removeAllStoredMoneyByCollectionBoxId(box.getId());
+        storedMoneyRepository.deleteAllStoredMoneyByCollectionBoxId(box.getId());
         boxRepo.delete(box);
+    }
+
+    public void addMoneyToBox(Long boxId, BigDecimal amount, String currency) {
+        CollectionBox box = boxRepo.findById(boxId)
+                .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
+
+
+        FundraisingEvent event = fundraisingEventRepository.findByCollectionBoxId(box.getId());
+
+        if(event == null){
+            throw new CollectionBoxNotAssignedToEventException();
+        }
+
+        CurrencyCode currencyCode;
+
+        try {
+            currencyCode = CurrencyCode.valueOf(currency);
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidCurrencyException("Unsupported currency: " + currency);
+        }
+
+        Money money = new Money(amount, currencyCode);
+
+        StoredMoney giftMoney = new StoredMoney(box,money);
+
+        box.setEmpty(false);
+
+        storedMoneyRepository.save(giftMoney);
+        boxRepo.save(box);
     }
 
 
