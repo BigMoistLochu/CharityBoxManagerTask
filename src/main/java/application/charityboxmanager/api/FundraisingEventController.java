@@ -2,6 +2,7 @@ package application.charityboxmanager.api;
 
 
 import application.charityboxmanager.api.dto.FundraisingEventDto;
+import application.charityboxmanager.api.dto.FundraisingEventInputDto;
 import application.charityboxmanager.service.FundraisingEventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class FundraisingEventController {
     }
 
     @PostMapping
-    public ResponseEntity<FundraisingEventDto> createFundraisingEvent(@RequestBody String name) {
-        FundraisingEventDto event = eventService.createFundraisingEvent(name);
+    public ResponseEntity<FundraisingEventDto> createFundraisingEvent(@RequestBody FundraisingEventInputDto dto) {
+        FundraisingEventDto event = eventService.createFundraisingEvent(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(event);
     }
 
