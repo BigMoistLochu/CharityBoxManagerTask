@@ -19,9 +19,4 @@ public class StoredMoneyService {
         return repository.findAllByCollectionBoxId(boxId);
     }
 
-    public void removeAllStoredMoneyByCollectionBoxId(Long boxId) {
-        repository.deleteAllStoredMoneyByCollectionBoxId(boxId);
-    }
-
-
 }

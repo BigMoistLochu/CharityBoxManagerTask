@@ -1,20 +1,22 @@
 package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.CollectionBoxDto;
-import application.charityboxmanager.exception.exceptions.CollectionBoxNotAssignedToEventException;
-import application.charityboxmanager.exception.exceptions.CollectionBoxNotFoundException;
-import application.charityboxmanager.exception.exceptions.InvalidCurrencyException;
+import application.charityboxmanager.exception.exceptions.*;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.FundraisingEvent;
+import application.charityboxmanager.model.FundraisingEventAccount;
 import application.charityboxmanager.model.StoredMoney;
 import application.charityboxmanager.model.common.CurrencyCode;
 import application.charityboxmanager.model.common.Money;
 import application.charityboxmanager.repository.CollectionBoxRepository;
+import application.charityboxmanager.repository.FundraisingEventAccountRepository;
 import application.charityboxmanager.repository.FundraisingEventRepository;
 import application.charityboxmanager.repository.StoredMoneyRepository;
+import application.charityboxmanager.service.utils.ExchangeRates;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -23,11 +25,13 @@ public class CollectionBoxService {
     private final CollectionBoxRepository boxRepo;
     private final StoredMoneyRepository storedMoneyRepository;
     private final FundraisingEventRepository fundraisingEventRepository;
+    private final FundraisingEventAccountRepository fundraisingEventAccountRepository;
 
-    public CollectionBoxService(CollectionBoxRepository boxRepo, StoredMoneyRepository storedMoneyRepository, FundraisingEventRepository fundraisingEventRepository) {
+    public CollectionBoxService(CollectionBoxRepository boxRepo, StoredMoneyRepository storedMoneyRepository, FundraisingEventRepository fundraisingEventRepository, FundraisingEventAccountRepository fundraisingEventAccountRepository) {
         this.boxRepo = boxRepo;
         this.storedMoneyRepository = storedMoneyRepository;
         this.fundraisingEventRepository = fundraisingEventRepository;
+        this.fundraisingEventAccountRepository = fundraisingEventAccountRepository;
     }
 
     public List<CollectionBoxDto> getAllCollectionBox(){
@@ -87,6 +91,43 @@ public class CollectionBoxService {
         boxRepo.save(box);
     }
 
+    @Transactional
+    public void transferCollectedMoneyToEventAccount(Long boxId) {
+        CollectionBox box = boxRepo.findById(boxId)
+                .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
+
+        if(!box.isAssigned()){
+            throw new CollectionBoxNotAssignedToEventException("Collection box must be assigned to a fundraising event before transfer money.");
+        }
+
+        List<StoredMoney> storedMonies = storedMoneyRepository.findAllByCollectionBoxId(boxId);
+
+        if (storedMonies.isEmpty()) {
+            throw new CollectionBoxIsEmptyException();
+        }
+
+        FundraisingEventAccount account = fundraisingEventAccountRepository.findAccountByCollectionBoxId(box.getId());
+
+        if (account == null) {
+            throw new FundraisingEventNotFoundException("No event account assigned to box");
+        }
+
+        CurrencyCode accountCurrency = account.getMoney().currency();
+
+        BigDecimal totalConvertedAmount = storedMonies.stream()
+                .map(storedMoney -> {
+                    BigDecimal rate = ExchangeRates.getRate(storedMoney.getMoney().currency(), accountCurrency);
+                    return storedMoney.getMoney().amount().multiply(rate);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        Money updatedBalance = account.getMoney().add(new Money(totalConvertedAmount, accountCurrency));
+        account.setMoney(updatedBalance);
+
+        fundraisingEventAccountRepository.save(account);
+        storedMoneyRepository.deleteAllStoredMoneyByCollectionBoxId(boxId);
+    }
 
 
 }

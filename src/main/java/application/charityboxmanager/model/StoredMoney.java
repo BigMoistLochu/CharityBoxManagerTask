@@ -23,4 +23,29 @@ public class StoredMoney {
         this.collectionBox = collectionBox;
         this.money = money;
     }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CollectionBox getCollectionBox() {
+        return collectionBox;
+    }
+
+    public void setCollectionBox(CollectionBox collectionBox) {
+        this.collectionBox = collectionBox;
+    }
+
+    public Money getMoney() {
+        return money;
+    }
+
+    public void setMoney(Money money) {
+        this.money = money;
+    }
 }

@@ -37,6 +37,13 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(CollectionBoxIsEmptyException.class)
+    public ResponseEntity<String> handleBoxNotEmpty(CollectionBoxIsEmptyException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(CollectionBoxAlreadyAssignedException.class)
     public ResponseEntity<String> handleBoxAlreadyAssigned(CollectionBoxAlreadyAssignedException ex) {
         return ResponseEntity

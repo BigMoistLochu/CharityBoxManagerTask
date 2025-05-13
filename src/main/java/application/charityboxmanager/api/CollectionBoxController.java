@@ -28,6 +28,12 @@ public class CollectionBoxController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/{boxId}/transfer")
+    public ResponseEntity<Void> transferMoney(@PathVariable Long boxId) {
+        collectionBoxService.transferCollectedMoneyToEventAccount(boxId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PostMapping
     public ResponseEntity<CollectionBoxDto> registerNewBox() {
         CollectionBoxDto createdBox = collectionBoxService.registerCollectionBox();
