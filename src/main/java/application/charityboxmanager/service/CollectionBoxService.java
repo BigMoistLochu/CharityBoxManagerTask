@@ -93,6 +93,7 @@ public class CollectionBoxService {
 
     @Transactional
     public void transferCollectedMoneyToEventAccount(Long boxId) {
+
         CollectionBox box = boxRepo.findById(boxId)
                 .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
 
@@ -116,10 +117,11 @@ public class CollectionBoxService {
 
         BigDecimal totalConvertedAmount = storedMonies.stream()
                 .map(storedMoney -> {
-                    BigDecimal rate = ExchangeRates.getRate(storedMoney.getMoney().currency(), accountCurrency);
-                    return storedMoney.getMoney().amount().multiply(rate);
+                    BigDecimal rate = ExchangeRates.getRate(accountCurrency);
+                    BigDecimal amountInAccountCurrency = storedMoney.getMoney().amount().multiply(rate);
+                    return amountInAccountCurrency;
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .reduce(BigDecimal.ZERO, (subtotal, value) -> subtotal.add(value))
                 .setScale(2, RoundingMode.HALF_UP);
 
         Money updatedBalance = account.getMoney().add(new Money(totalConvertedAmount, accountCurrency));
