@@ -17,12 +17,4 @@ public interface StoredMoneyRepository extends JpaRepository<StoredMoney,Long> {
     @Modifying
     @Query("DELETE FROM StoredMoney sm WHERE sm.collectionBox.id = :boxId")
     void deleteAllStoredMoneyByCollectionBoxId(@Param("boxId") Long boxId);
-
-    @Query(value = """
-        SELECT SUM(AMOUNT)
-        FROM STORED_MONEY
-        WHERE BOX_ID = :boxId
-        """, nativeQuery = true)
-    BigDecimal getTotalStoredAmountByCollectionBoxId(@Param("boxId") Long boxId);
-
 }
