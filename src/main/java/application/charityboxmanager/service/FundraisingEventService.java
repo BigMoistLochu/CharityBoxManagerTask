@@ -2,6 +2,7 @@ package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.FundraisingEventDto;
 import application.charityboxmanager.api.dto.FundraisingEventInputDto;
+import application.charityboxmanager.api.dto.FundraisingEventsFinancialReportDto;
 import application.charityboxmanager.exception.exceptions.*;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.FundraisingEvent;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class FundraisingEventService {
@@ -83,6 +85,16 @@ public class FundraisingEventService {
 
         fundraisingEventRepository.save(event);
         collectingBoxRepository.save(box);
+    }
+
+
+    public List<FundraisingEventsFinancialReportDto> getFundraisingEventsFinancialReport(){
+        List<FundraisingEventAccount> accounts = fundraisingEventAccountRepository.findAll();
+
+        List<FundraisingEventsFinancialReportDto> report = accounts.stream()
+                .map(event -> new FundraisingEventsFinancialReportDto(event.getFundraisingEvent().getName(),event.getMoney().amount(), event.getMoney().currency().name()))
+                .toList();
+        return report;
     }
 
 }
