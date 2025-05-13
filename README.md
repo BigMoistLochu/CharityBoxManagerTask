@@ -34,8 +34,23 @@ git clone https://github.com/BigMoistLochu/CharityBoxManagerTask.git
 
 Build the Docker image using the following command. This will create an image named `charity-box-manager-app` based on the `Dockerfile` present in the project.
 
+
 ```bash
 docker build -t charity-box-manager-app .
+```
+
+### OR
+
+### 2.1 Build Project By Maven
+
+
+
+```bash
+mvn clean package
+```
+
+```bash
+java -jar target/CharityBoxManager-0.0.1-SNAPSHOT.jar
 ```
 
 ### 3. Run the Docker Container
