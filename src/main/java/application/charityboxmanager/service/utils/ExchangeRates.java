@@ -6,18 +6,32 @@ import java.util.Map;
 
 public class ExchangeRates {
 
-    private static final Map<CurrencyCode, BigDecimal> RATES = Map.of(
-            CurrencyCode.GBP, BigDecimal.valueOf(1.00),
-            CurrencyCode.EUR, BigDecimal.valueOf(0.91),
-            CurrencyCode.PLN, BigDecimal.valueOf(4.29)
+    private static final Map<CurrencyCode, Map<CurrencyCode, BigDecimal>> RATES = Map.of(
+            CurrencyCode.PLN, Map.of(
+                    CurrencyCode.GBP, BigDecimal.valueOf(0.20),
+                    CurrencyCode.EUR, BigDecimal.valueOf(0.24),
+                    CurrencyCode.PLN, BigDecimal.valueOf(1.00)
+            ),
+            CurrencyCode.EUR, Map.of(
+                    CurrencyCode.GBP, BigDecimal.valueOf(0.84),
+                    CurrencyCode.EUR, BigDecimal.valueOf(1.00),
+                    CurrencyCode.PLN, BigDecimal.valueOf(4.24)
+            ),
+            CurrencyCode.GBP, Map.of(
+                    CurrencyCode.GBP, BigDecimal.valueOf(1.00),
+                    CurrencyCode.EUR, BigDecimal.valueOf(1.19),
+                    CurrencyCode.PLN, BigDecimal.valueOf(5.04)
+            )
     );
 
-    public static BigDecimal getRate(CurrencyCode currency) {
-        if (!RATES.containsKey(currency)) {
-            throw new InvalidCurrencyException("Unsupported currency conversion: " + currency);
+    public static BigDecimal getRate(CurrencyCode from, CurrencyCode to) {
+        if (!RATES.containsKey(from) || !RATES.get(from).containsKey(to)) {
+            throw new InvalidCurrencyException("Unsupported currency conversion: " + from + " to " + to);
         }
-        return RATES.get(currency);
+        return RATES.get(from).get(to);
     }
+
+
 
 
 }

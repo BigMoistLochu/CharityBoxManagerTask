@@ -117,7 +117,7 @@ public class CollectionBoxService {
 
         BigDecimal totalConvertedAmount = storedMonies.stream()
                 .map(storedMoney -> {
-                    BigDecimal rate = ExchangeRates.getRate(accountCurrency);
+                    BigDecimal rate = ExchangeRates.getRate(storedMoney.getMoney().currency(),accountCurrency);
                     BigDecimal amountInAccountCurrency = storedMoney.getMoney().amount().multiply(rate);
                     return amountInAccountCurrency;
                 })
