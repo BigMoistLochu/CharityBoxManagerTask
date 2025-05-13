@@ -5,6 +5,18 @@
 Before running the project, ensure you have the following installed:
 
 - **Docker**: Docker must be installed on your system. If you don’t have it yet, you can install Docker from [here](https://www.docker.com/get-started).
+## Development Tools
+
+After running the application, you can access the following tools for development and debugging:
+
+- **API documentation (Swagger UI):**  
+  [http://localhost:8080/api/v1/docs](http://localhost:8080/api/v1/docs)
+
+- **H2 Database Console:**  
+  [http://localhost:8080/h2-console](http://localhost:8080/h2-console)  
+**JDBC URL:** `jdbc:h2:mem:CharityBoxManagerDB`
+**Username:** `sa`
+**Password:** `empty`
 
 ## Getting Started
 
@@ -33,5 +45,7 @@ Once the image is built, you can run it using Docker. This command will run the 
 ```bash
 docker run -it --name charity-box-manager-container -p 8080:8080 charity-box-manager-app /bin/bash
 ```
+
+
 
 
