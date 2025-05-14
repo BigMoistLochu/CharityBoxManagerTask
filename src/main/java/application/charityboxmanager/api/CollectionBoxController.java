@@ -23,9 +23,9 @@ public class CollectionBoxController {
         return ResponseEntity.ok(collectionBoxService.getAllCollectionBox());
     }
     @PostMapping("/{boxId}/money")
-    public ResponseEntity<Void> addMoneyToBox(@PathVariable Long boxId,@RequestBody StoredMoneyDto dto) {
-        collectionBoxService.addMoneyToBox(boxId, dto.amount(), dto.currency());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<StoredMoneyDto> addMoneyToBox(@PathVariable Long boxId,@RequestBody StoredMoneyDto dto) {
+        StoredMoneyDto storedMoneyDto = collectionBoxService.addMoneyToBox(boxId, dto.amount(), dto.currency());
+        return ResponseEntity.status(HttpStatus.CREATED).body(storedMoneyDto);
     }
 
     @PostMapping("/{boxId}/transfer")

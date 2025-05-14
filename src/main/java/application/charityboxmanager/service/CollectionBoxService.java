@@ -1,6 +1,7 @@
 package application.charityboxmanager.service;
 
 import application.charityboxmanager.api.dto.CollectionBoxDto;
+import application.charityboxmanager.api.dto.StoredMoneyDto;
 import application.charityboxmanager.exception.exceptions.*;
 import application.charityboxmanager.model.CollectionBox;
 import application.charityboxmanager.model.FundraisingEvent;
@@ -62,7 +63,7 @@ public class CollectionBoxService {
         boxRepo.delete(box);
     }
 
-    public void addMoneyToBox(Long boxId, BigDecimal amount, String currency) {
+    public StoredMoneyDto addMoneyToBox(Long boxId, BigDecimal amount, String currency) {
         CollectionBox box = boxRepo.findById(boxId)
                 .orElseThrow(() -> new CollectionBoxNotFoundException("Collection box not found"));
 
@@ -87,8 +88,10 @@ public class CollectionBoxService {
 
         box.setEmpty(false);
 
-        storedMoneyRepository.save(giftMoney);
+        StoredMoney storedMoney = storedMoneyRepository.save(giftMoney);
         boxRepo.save(box);
+
+        return new StoredMoneyDto(storedMoney.getMoney().amount(), storedMoney.getMoney().currency().name());
     }
 
     @Transactional
